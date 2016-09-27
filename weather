@@ -1,0 +1,30 @@
+#!/bin/sh
+
+wea=`wget -q -O- http://www.tenki-yoho.com/cities/38.html|grep -e colspan=4\>\<\IMG |sed -e 's@<TD colspan=4><IMG SRC="/icon/sketch/@@g' -e 's@.gif\(.*\)@@g' -e "2d" `
+dir='cloud'
+echo $wea
+if [ $(echo $wea | grep -e 'blizzard') ]||[ $(echo $wea | grep -e 'storm') ]; then
+	dir='storm'
+elif [ $(echo $wea | grep -e 'snow') ]; then
+	dir='snow'
+elif [ $(echo $wea | grep -e 'rain') ]; then
+	dir='rain'
+elif [ $(echo $wea | grep -e 'sun') ]; then
+	dir='sun'
+fi
+
+if [ ! -d /mnt/sd/${dir} ]; then
+	if [ -d /mnt/sd/storm ]; then
+		mv /mnt/sd/storm/ /mnt/sd/playlist/storm/
+	elif [ -d /mnt/sd/snow ]; then
+		mv /mnt/sd/snow/ /mnt/sd/playlist/snow/
+	elif [ -d /mnt/sd/rain ]; then
+		mv /mnt/sd/rain/ /mnt/sd/playlist/rain/
+	elif [ -d /mnt/sd/sun ]; then
+		mv /mnt/sd/sun/ /mnt/sd/playlist/sun/
+	elif [ -d /mnt/sd/cloud ]; then
+		mv /mnt/sd/cloud/ /mnt/sd/playlist/cloud/
+	fi
+	mv /mnt/sd/playlist/${dir}/ /mnt/sd/${dir}/
+fi
+sync;sync;sync;
